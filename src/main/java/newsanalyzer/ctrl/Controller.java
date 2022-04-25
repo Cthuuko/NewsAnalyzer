@@ -16,10 +16,6 @@ public class Controller {
 
     public void process(NewsApi newsApi) throws NewsAnalyzerException {
         System.out.println("Start process");
-
-        //TODO implement Error handling
-
-        //TODO load the news based on the parameters
         try {
             NewsReponse newsResponse = (NewsReponse) getData(newsApi);
             if (newsResponse != null) {
@@ -32,6 +28,7 @@ public class Controller {
                 // https://www.baeldung.com/java-collectors-tomap
                 // https://stackoverflow.com/questions/32312876/ignore-duplicates-when-producing-map-using-streams
 
+                // Analysing the results
                 String providerWithMostArticles = getProviderWithMostArticles(articles);
                 String shortestAuthorName = getShortestAuthorName(articles);
                 List<String> sortedByLengthAndAlphabet = getSortedTitles(articles);
@@ -41,16 +38,10 @@ public class Controller {
                 System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
                 System.out.println(System.lineSeparator() + " Articles sorted by length and title: ");
                 sortedByLengthAndAlphabet.forEach(System.out::println);
-
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new NewsAnalyzerException("Something went wrong. Please check your search configuration and the validity of your API key");
+            throw new NewsAnalyzerException("There's an error with the API call. Please check your search configuration or your internet");
         }
-
-
-        //TODO implement methods for analysis
-
         System.out.println("End process");
     }
 

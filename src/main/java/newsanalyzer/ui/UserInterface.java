@@ -18,7 +18,7 @@ public class UserInterface {
     private Controller ctrl = new Controller();
 
     public void getDataFromCtrl1() {
-        System.out.println("Search");
+        System.out.println("Search corona news");
 
         NewsApi newsApi = new NewsApiBuilder()
                 .setApiKey(Controller.APIKEY)
@@ -32,7 +32,7 @@ public class UserInterface {
     }
 
     public void getDataFromCtrl2() {
-        System.out.println("Search");
+        System.out.println("Search chess news");
 
         NewsApi newsApi = new NewsApiBuilder()
                 .setApiKey(Controller.APIKEY)
@@ -44,18 +44,22 @@ public class UserInterface {
     }
 
     public void getDataFromCtrl3() {
-        System.out.println("Search");
+        System.out.println("Search all news");
 
         NewsApi newsApi = new NewsApiBuilder()
                 .setApiKey(Controller.APIKEY)
-                .setQ("")
                 .setEndPoint(Endpoint.EVERYTHING)
                 .createNewsApi();
         readData(newsApi);
     }
 
     public void getDataForCustomInput() {
+        System.out.println("Search with errors in config");
 
+        NewsApi newsApi = new NewsApiBuilder()
+                .setApiKey(Controller.APIKEY)
+                .createNewsApi();
+        readData(newsApi);
     }
 
 
@@ -65,7 +69,7 @@ public class UserInterface {
         menu.insert("a", "Search Top News about Corona", this::getDataFromCtrl1);
         menu.insert("b", "Search Chess news from March 2022 until today", this::getDataFromCtrl2);
         menu.insert("c", "Search all news", this::getDataFromCtrl3);
-        menu.insert("d", "Choice User Imput:", this::getDataForCustomInput);
+        menu.insert("d", "Search with errors in config:", this::getDataForCustomInput);
         menu.insert("q", "Quit", null);
         Runnable choice;
         while ((choice = menu.exec()) != null) {
@@ -92,7 +96,6 @@ public class UserInterface {
             try {
                 number = Double.parseDouble(str);
             } catch (NumberFormatException e) {
-                number = null;
                 System.out.println("Please enter a valid number:");
                 continue;
             }
