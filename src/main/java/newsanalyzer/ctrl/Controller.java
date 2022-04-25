@@ -32,13 +32,16 @@ public class Controller {
             // Analysing the results
             String providerWithMostArticles = getProviderWithMostArticles(articles);
             String shortestAuthorName = getShortestAuthorName(articles);
-            List<String> sortedByLengthAndAlphabet = getSortedTitles(articles);
+            List<String> sortedTitlesByAlphabet = getSortedTitlesByAlphabet(articles);
+            List<String> sortedTitlesByLength = getSortedTitlesByLength(articles);
 
             System.out.println(System.lineSeparator() + " Article count: " + articles.size());
             System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
             System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
-            System.out.println(System.lineSeparator() + " Articles sorted by length and title: ");
-            sortedByLengthAndAlphabet.forEach(System.out::println);
+            System.out.println(System.lineSeparator() + " Articles sorted by alphabet: ");
+            sortedTitlesByAlphabet.forEach(System.out::println);
+            System.out.println(System.lineSeparator() + " Articles sorted by length: ");
+            sortedTitlesByLength.forEach(System.out::println);
 
             System.out.println("End process");
         } catch (NullPointerException e) {
@@ -73,9 +76,16 @@ public class Controller {
                 .getKey();
     }
 
-    private List<String> getSortedTitles(List<Article> articles) {
+    private List<String> getSortedTitlesByAlphabet(List<Article> articles) {
         return articles.stream()
                 .sorted(Comparator.comparing(Article::getTitle))
+                .map(Article::getTitle)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getSortedTitlesByLength(List<Article> articles) {
+        return articles.stream()
+                .sorted(Comparator.comparing(article -> article.getTitle().length()))
                 .map(Article::getTitle)
                 .collect(Collectors.toList());
     }
