@@ -53,15 +53,6 @@ public class UserInterface {
         readData(newsApi);
     }
 
-    public void getDataFromCtrl4() {
-        System.out.println("Search with errors in config");
-
-        NewsApi newsApi = new NewsApiBuilder()
-                .setApiKey(Controller.APIKEY)
-                .createNewsApi();
-        readData(newsApi);
-    }
-
     public void getDataFromCustomInput() {
         System.out.println("Search with errors in config");
 
@@ -101,7 +92,6 @@ public class UserInterface {
         menu.insert("a", "Search Top News about Corona", this::getDataFromCtrl1);
         menu.insert("b", "Search Chess news from March 2022 until today", this::getDataFromCtrl2);
         menu.insert("c", "Search all news", this::getDataFromCtrl3);
-        menu.insert("d", "Search with errors in config:", this::getDataFromCtrl4);
         menu.insert("e", "Custom Input:", this::getDataFromCustomInput);
         menu.insert("q", "Quit", null);
         Runnable choice;
