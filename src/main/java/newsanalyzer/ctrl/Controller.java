@@ -21,7 +21,9 @@ public class Controller {
             NewsReponse newsResponse = (NewsReponse) getData(newsApi);
 
             List<Article> articles = newsResponse.getArticles();
-            articles.forEach(article -> System.out.println(article.toString()));
+            for (Article article : articles) {
+                downloadContent(newsApi, article);
+            }
 
             // Courtesy to the following links:
             // https://stackoverflow.com/questions/47842083/java-8-collections-max-size-with-count
@@ -88,5 +90,13 @@ public class Controller {
                 .sorted(Comparator.comparing(article -> article.getTitle().length()))
                 .map(Article::getTitle)
                 .collect(Collectors.toList());
+    }
+
+    private void downloadContent(NewsApi newsApi, Article article) throws NewsAnalyzerException {
+        try {
+            article.setContent(newsApi.requestData(article.getUrl()));
+        } catch (Exception e) {
+            throw new NewsAnalyzerException("There's been an error with downloading the articles.");
+        }
     }
 }

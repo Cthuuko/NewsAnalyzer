@@ -107,8 +107,7 @@ public class NewsApi {
         this.endpoint = endpoint;
     }
 
-    protected String requestData() throws NewsAnalyzerException {
-        String url = buildURL();
+    public String requestData(String url) throws NewsAnalyzerException {
         System.out.println("URL: " + url);
         URL obj;
         try {
@@ -179,7 +178,7 @@ public class NewsApi {
 
     public NewsReponse getNews() throws NewsAnalyzerException {
         NewsReponse newsReponse = null;
-        String jsonResponse = requestData();
+        String jsonResponse = requestData(buildURL());
         if (jsonResponse != null && !jsonResponse.isEmpty()) {
 
             ObjectMapper objectMapper = new ObjectMapper();
