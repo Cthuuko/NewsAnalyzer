@@ -136,6 +136,7 @@ public class UserInterface {
     private void readData(NewsApi newsApi) {
         try {
             ctrl.process(newsApi);
+            ctrl.printData();
         } catch (NewsAnalyzerException e) {
             System.out.println(e.getMessage());
         }

@@ -14,42 +14,17 @@ public class Controller {
 
     public static final String APIKEY = "8faa40daa44941d68eaaef41abe0821e";
 
+    private List<Article> results;
+
     public void process(NewsApi newsApi) throws NewsAnalyzerException {
         System.out.println("Start process");
         try {
-            NewsReponse newsResponse = (NewsReponse) getData(newsApi);
-
+            NewsReponse newsResponse = newsApi.getNews();
             List<Article> articles = newsResponse.getArticles();
             for (Article article : articles) {
                 downloadContent(newsApi, article);
             }
-
-            // Courtesy to the following links:
-            // https://stackoverflow.com/questions/47842083/java-8-collections-max-size-with-count
-            // https://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
-            // https://www.baeldung.com/java-collectors-tomap
-            // https://stackoverflow.com/questions/32312876/ignore-duplicates-when-producing-map-using-streams
-
-            // Analysing the results
-            if (articles.size() > 0) {
-                String providerWithMostArticles = getProviderWithMostArticles(articles);
-                String shortestAuthorName = getShortestAuthorName(articles);
-                List<String> sortedTitlesByAlphabet = getSortedTitlesByAlphabet(articles);
-                List<String> sortedTitlesByLength = getSortedTitlesByLength(articles);
-
-                System.out.println(System.lineSeparator() + " Article count: " + articles.size());
-                System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
-                System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
-                System.out.println(System.lineSeparator() + " Articles sorted by alphabet: ");
-                sortedTitlesByAlphabet.forEach(System.out::println);
-                System.out.println(System.lineSeparator() + " Articles sorted by length: ");
-                sortedTitlesByLength.forEach(System.out::println);
-            } else {
-                System.out.println("No results found.");
-            }
-
-
-            System.out.println("End process");
+            results = articles;
         } catch (NullPointerException e) {
             throw new NewsAnalyzerException("There is an error retrieving the data. Please check your internet connection or the search configurations.");
         }
@@ -57,8 +32,34 @@ public class Controller {
     }
 
 
-    public Object getData(NewsApi newsApi) throws NewsAnalyzerException {
-        return newsApi.getNews();
+    public void printData() throws NewsAnalyzerException {
+
+        // Courtesy to the following links:
+        // https://stackoverflow.com/questions/47842083/java-8-collections-max-size-with-count
+        // https://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
+        // https://www.baeldung.com/java-collectors-tomap
+        // https://stackoverflow.com/questions/32312876/ignore-duplicates-when-producing-map-using-streams
+
+        // Analysing the results
+        if (!results.isEmpty()) {
+            String providerWithMostArticles = getProviderWithMostArticles(results);
+            String shortestAuthorName = getShortestAuthorName(results);
+            List<String> sortedTitlesByAlphabet = getSortedTitlesByAlphabet(results);
+            List<String> sortedTitlesByLength = getSortedTitlesByLength(results);
+
+            System.out.println(System.lineSeparator() + " Article count: " + results.size());
+            System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
+            System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
+            System.out.println(System.lineSeparator() + " Articles sorted by alphabet: ");
+            sortedTitlesByAlphabet.forEach(System.out::println);
+            System.out.println(System.lineSeparator() + " Articles sorted by length: ");
+            sortedTitlesByLength.forEach(System.out::println);
+        } else {
+            System.out.println("No results found.");
+        }
+
+
+        System.out.println("End process");
     }
 
     private String getProviderWithMostArticles(List<Article> articles) throws NewsAnalyzerException {
