@@ -3,6 +3,7 @@ package newsanalyzer.ctrl;
 import newsapi.NewsApi;
 import newsapi.beans.Article;
 import newsapi.beans.NewsReponse;
+import newsapi.error.NewsAnalyzerException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,35 +19,36 @@ public class Controller {
         System.out.println("Start process");
         try {
             NewsReponse newsResponse = (NewsReponse) getData(newsApi);
-            if (newsResponse != null) {
-                List<Article> articles = newsResponse.getArticles();
-                articles.forEach(article -> System.out.println(article.toString()));
 
-                // Courtesy to the following links:
-                // https://stackoverflow.com/questions/47842083/java-8-collections-max-size-with-count
-                // https://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
-                // https://www.baeldung.com/java-collectors-tomap
-                // https://stackoverflow.com/questions/32312876/ignore-duplicates-when-producing-map-using-streams
+            List<Article> articles = newsResponse.getArticles();
+            articles.forEach(article -> System.out.println(article.toString()));
 
-                // Analysing the results
-                String providerWithMostArticles = getProviderWithMostArticles(articles);
-                String shortestAuthorName = getShortestAuthorName(articles);
-                List<String> sortedByLengthAndAlphabet = getSortedTitles(articles);
+            // Courtesy to the following links:
+            // https://stackoverflow.com/questions/47842083/java-8-collections-max-size-with-count
+            // https://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
+            // https://www.baeldung.com/java-collectors-tomap
+            // https://stackoverflow.com/questions/32312876/ignore-duplicates-when-producing-map-using-streams
 
-                System.out.println(System.lineSeparator() + " Article count: " + articles.size());
-                System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
-                System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
-                System.out.println(System.lineSeparator() + " Articles sorted by length and title: ");
-                sortedByLengthAndAlphabet.forEach(System.out::println);
-            }
-        } catch (Exception e) {
-            throw new NewsAnalyzerException("There's an error with the API call. Please check your search configuration or your internet");
+            // Analysing the results
+            String providerWithMostArticles = getProviderWithMostArticles(articles);
+            String shortestAuthorName = getShortestAuthorName(articles);
+            List<String> sortedByLengthAndAlphabet = getSortedTitles(articles);
+
+            System.out.println(System.lineSeparator() + " Article count: " + articles.size());
+            System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
+            System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
+            System.out.println(System.lineSeparator() + " Articles sorted by length and title: ");
+            sortedByLengthAndAlphabet.forEach(System.out::println);
+
+            System.out.println("End process");
+        } catch (NullPointerException e) {
+            throw new NewsAnalyzerException("There is an error retrieving the data. Please check your internet connection or the search configurations.");
         }
-        System.out.println("End process");
+
     }
 
 
-    public Object getData(NewsApi newsApi) {
+    public Object getData(NewsApi newsApi) throws NewsAnalyzerException {
         return newsApi.getNews();
     }
 

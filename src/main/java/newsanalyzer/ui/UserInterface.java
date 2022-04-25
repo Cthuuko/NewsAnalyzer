@@ -2,12 +2,12 @@ package newsanalyzer.ui;
 
 
 import newsanalyzer.ctrl.Controller;
-import newsanalyzer.ctrl.NewsAnalyzerException;
 import newsapi.NewsApi;
 import newsapi.NewsApiBuilder;
 import newsapi.enums.Category;
 import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
+import newsapi.error.NewsAnalyzerException;
 
 import java.io.BufferedReader;
 import java.io.IOException;

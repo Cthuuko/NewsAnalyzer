@@ -2,9 +2,9 @@ package newsapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import newsanalyzer.ctrl.NewsAnalyzerException;
 import newsapi.beans.NewsReponse;
 import newsapi.enums.*;
+import newsapi.error.NewsAnalyzerException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -114,7 +114,6 @@ public class NewsApi {
         try {
             obj = new URL(url);
         } catch (MalformedURLException e) {
-            // TOOO improve ErrorHandling
             throw new NewsAnalyzerException("The current URL is malformed. Please check the URL");
         }
         HttpURLConnection con;
@@ -128,7 +127,6 @@ public class NewsApi {
             }
             in.close();
         } catch (IOException e) {
-            // TOOO improve ErrorHandling
             throw new NewsAnalyzerException("Response could not be read. Please check your internet connection or click the URL for further information.");
         }
         return response.toString();
@@ -179,26 +177,21 @@ public class NewsApi {
 
     }
 
-    public NewsReponse getNews() {
-        try {
-            NewsReponse newsReponse = null;
-            String jsonResponse = requestData();
-            if (jsonResponse != null && !jsonResponse.isEmpty()) {
+    public NewsReponse getNews() throws NewsAnalyzerException {
+        NewsReponse newsReponse = null;
+        String jsonResponse = requestData();
+        if (jsonResponse != null && !jsonResponse.isEmpty()) {
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                try {
-                    newsReponse = objectMapper.readValue(jsonResponse, NewsReponse.class);
-                    if (!"ok".equals(newsReponse.getStatus())) {
-                        throw new NewsAnalyzerException("There is an error with the response. Check your internet connectivity. HTTP Status: " + newsReponse.getStatus());
-                    }
-                } catch (JsonProcessingException e) {
-                    throw new NewsAnalyzerException("The JSON could not be processed. Please check the response.");
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                newsReponse = objectMapper.readValue(jsonResponse, NewsReponse.class);
+                if (!"ok".equals(newsReponse.getStatus())) {
+                    throw new NewsAnalyzerException("There is an error with the response. Check your internet connectivity. HTTP Status: " + newsReponse.getStatus());
                 }
+            } catch (JsonProcessingException e) {
+                throw new NewsAnalyzerException("The JSON could not be processed. Please check the response.");
             }
-            return newsReponse;
-        } catch (NewsAnalyzerException e) {
-            System.out.println(e.getMessage());
-            return null;
         }
+        return newsReponse;
     }
 }

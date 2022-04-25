@@ -5,6 +5,7 @@ import newsapi.beans.NewsReponse;
 import newsapi.enums.Category;
 import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
+import newsapi.error.NewsAnalyzerException;
 
 import java.util.List;
 
@@ -22,24 +23,28 @@ public class NewsAPIExample {
                 .setSourceCategory(Category.health)
                 .createNewsApi();
 
-        NewsReponse newsResponse = newsApi.getNews();
-        if (newsResponse != null) {
-            List<Article> articles = newsResponse.getArticles();
-            articles.stream().forEach(article -> System.out.println(article.toString()));
-        }
+        try {
+            NewsReponse newsResponse = newsApi.getNews();
+            if (newsResponse != null) {
+                List<Article> articles = newsResponse.getArticles();
+                articles.forEach(article -> System.out.println(article.toString()));
+            }
 
-        newsApi = new NewsApiBuilder()
-                .setApiKey(APIKEY)
-                .setQ("corona")
-                .setEndPoint(Endpoint.EVERYTHING)
-                .setFrom("2020-03-20")
-                .setExcludeDomains("Lifehacker.com")
-                .createNewsApi();
+            newsApi = new NewsApiBuilder()
+                    .setApiKey(APIKEY)
+                    .setQ("corona")
+                    .setEndPoint(Endpoint.EVERYTHING)
+                    .setFrom("2020-03-20")
+                    .setExcludeDomains("Lifehacker.com")
+                    .createNewsApi();
 
-        newsResponse = newsApi.getNews();
-        if (newsResponse != null) {
-            List<Article> articles = newsResponse.getArticles();
-            articles.stream().forEach(article -> System.out.println(article.toString()));
+            newsResponse = newsApi.getNews();
+            if (newsResponse != null) {
+                List<Article> articles = newsResponse.getArticles();
+                articles.forEach(article -> System.out.println(article.toString()));
+            }
+        } catch (NewsAnalyzerException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
