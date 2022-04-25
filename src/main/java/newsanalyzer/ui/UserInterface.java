@@ -53,7 +53,7 @@ public class UserInterface {
         readData(newsApi);
     }
 
-    public void getDataForCustomInput() {
+    public void getDataFromCtrl4() {
         System.out.println("Search with errors in config");
 
         NewsApi newsApi = new NewsApiBuilder()
@@ -62,6 +62,38 @@ public class UserInterface {
         readData(newsApi);
     }
 
+    public void getDataFromCustomInput() {
+        System.out.println("Search with errors in config");
+
+        System.out.println("Type in your query: (keep it empty to search every kind of news)");
+        String query = readLine();
+        if (query.equals("")) query = null;
+
+        Endpoint endpoint = null;
+
+        while (endpoint == null) {
+            System.out.println("Type in your preferred type of news (Type a or b)");
+            System.out.println("a) Everything");
+            System.out.println("b) Headlines");
+
+            String choice = readLine();
+
+            if (choice.equals("a")) {
+                endpoint = Endpoint.EVERYTHING;
+            } else if (choice.equals("b")) {
+                endpoint = Endpoint.TOP_HEADLINES;
+            } else {
+                System.out.println("Your input is invalid. Please try again");
+            }
+        }
+
+        NewsApi newsApi = new NewsApiBuilder()
+                .setApiKey(Controller.APIKEY)
+                .setQ(query)
+                .setEndPoint(endpoint)
+                .createNewsApi();
+        readData(newsApi);
+    }
 
     public void start() {
         Menu<Runnable> menu = new Menu<>("User Interfacx");
@@ -69,7 +101,8 @@ public class UserInterface {
         menu.insert("a", "Search Top News about Corona", this::getDataFromCtrl1);
         menu.insert("b", "Search Chess news from March 2022 until today", this::getDataFromCtrl2);
         menu.insert("c", "Search all news", this::getDataFromCtrl3);
-        menu.insert("d", "Search with errors in config:", this::getDataForCustomInput);
+        menu.insert("d", "Search with errors in config:", this::getDataFromCtrl4);
+        menu.insert("e", "Custom Input:", this::getDataFromCustomInput);
         menu.insert("q", "Quit", null);
         Runnable choice;
         while ((choice = menu.exec()) != null) {

@@ -8,7 +8,6 @@ import newsapi.error.NewsAnalyzerException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -32,18 +31,23 @@ public class Controller {
             // https://stackoverflow.com/questions/32312876/ignore-duplicates-when-producing-map-using-streams
 
             // Analysing the results
-            String providerWithMostArticles = getProviderWithMostArticles(articles);
-            String shortestAuthorName = getShortestAuthorName(articles);
-            List<String> sortedTitlesByAlphabet = getSortedTitlesByAlphabet(articles);
-            List<String> sortedTitlesByLength = getSortedTitlesByLength(articles);
+            if (articles.size() > 0) {
+                String providerWithMostArticles = getProviderWithMostArticles(articles);
+                String shortestAuthorName = getShortestAuthorName(articles);
+                List<String> sortedTitlesByAlphabet = getSortedTitlesByAlphabet(articles);
+                List<String> sortedTitlesByLength = getSortedTitlesByLength(articles);
 
-            System.out.println(System.lineSeparator() + " Article count: " + articles.size());
-            System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
-            System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
-            System.out.println(System.lineSeparator() + " Articles sorted by alphabet: ");
-            sortedTitlesByAlphabet.forEach(System.out::println);
-            System.out.println(System.lineSeparator() + " Articles sorted by length: ");
-            sortedTitlesByLength.forEach(System.out::println);
+                System.out.println(System.lineSeparator() + " Article count: " + articles.size());
+                System.out.println(System.lineSeparator() + " Provider with most articles: " + providerWithMostArticles);
+                System.out.println(System.lineSeparator() + " Author with shortest name: " + shortestAuthorName);
+                System.out.println(System.lineSeparator() + " Articles sorted by alphabet: ");
+                sortedTitlesByAlphabet.forEach(System.out::println);
+                System.out.println(System.lineSeparator() + " Articles sorted by length: ");
+                sortedTitlesByLength.forEach(System.out::println);
+            } else {
+                System.out.println("No results found.");
+            }
+
 
             System.out.println("End process");
         } catch (NullPointerException e) {
@@ -57,24 +61,24 @@ public class Controller {
         return newsApi.getNews();
     }
 
-    private String getProviderWithMostArticles(List<Article> articles) {
+    private String getProviderWithMostArticles(List<Article> articles) throws NewsAnalyzerException {
         return articles.stream()
                 .collect(Collectors.groupingBy(article -> article.getSource().getName(), Collectors.counting()))
                 .entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
-                .orElseThrow(NoSuchElementException::new)
+                .orElseThrow(() -> new NewsAnalyzerException("There was a problem with the retrieved articles."))
                 .getKey();
     }
 
-    private String getShortestAuthorName(List<Article> articles) {
+    private String getShortestAuthorName(List<Article> articles) throws NewsAnalyzerException {
         return articles.stream()
                 .filter(article -> article.getAuthor() != null)
                 .collect(Collectors.toMap(Article::getAuthor, article -> article.getAuthor().length(), (author, duplicateAuthor) -> author))
                 .entrySet()
                 .stream()
                 .min(Map.Entry.comparingByValue())
-                .orElseThrow(NoSuchElementException::new)
+                .orElseThrow(() -> new NewsAnalyzerException("There was a problem with the retrieved articles."))
                 .getKey();
     }
 
