@@ -3,8 +3,11 @@ package newsanalyzer.ctrl;
 import newsapi.NewsApi;
 import newsapi.beans.Article;
 import newsapi.beans.NewsReponse;
+import newsapi.downloader.ParallelDownloader;
+import newsapi.downloader.SequentialDownloader;
 import newsapi.error.NewsAnalyzerException;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +18,21 @@ public class Controller {
     public static final String APIKEY = "8faa40daa44941d68eaaef41abe0821e";
 
     private List<Article> results;
+    private List<String> lastSearchUrls = new ArrayList<>();
+    private SequentialDownloader seq = new SequentialDownloader();
+    private ParallelDownloader par = new ParallelDownloader();
 
     public void process(NewsApi newsApi) throws NewsAnalyzerException {
         System.out.println("Start process");
+        lastSearchUrls = new ArrayList<>();
         try {
             NewsReponse newsResponse = newsApi.getNews();
             List<Article> articles = newsResponse.getArticles();
             for (Article article : articles) {
+                // Avoid news links with query parameters
+                if (!article.getUrl().contains("?")) {
+                    lastSearchUrls.add(article.getUrl());
+                }
                 downloadContent(newsApi, article);
             }
             results = articles;
@@ -60,6 +71,15 @@ public class Controller {
 
 
         System.out.println("End process");
+    }
+
+    public void executeDownloaders() {
+        if (lastSearchUrls.isEmpty()) {
+            System.out.println("There is no search history available.");
+        } else {
+            seq.process(lastSearchUrls);
+            par.process(lastSearchUrls);
+        }
     }
 
     private String getProviderWithMostArticles(List<Article> articles) throws NewsAnalyzerException {

@@ -38,7 +38,7 @@ public class UserInterface {
                 .setApiKey(Controller.APIKEY)
                 .setQ("chess")
                 .setEndPoint(Endpoint.EVERYTHING)
-                .setFrom("2022-03-25")
+                .setFrom("2022-04-17") // Parameter has a 1 month cap, change to 1 month earlier from today's date
                 .createNewsApi();
         readData(newsApi);
     }
@@ -86,12 +86,17 @@ public class UserInterface {
         readData(newsApi);
     }
 
+    public void downloadLastSearch() {
+        ctrl.executeDownloaders();
+    }
+
     public void start() {
         Menu<Runnable> menu = new Menu<>("User Interfacx");
         menu.setTitel("Wählen Sie aus:");
         menu.insert("a", "Search Top News about Corona", this::getDataFromCtrl1);
         menu.insert("b", "Search Chess news from March 2022 until today", this::getDataFromCtrl2);
         menu.insert("c", "Search all news", this::getDataFromCtrl3);
+        menu.insert("d", "Download last search:", this::downloadLastSearch);
         menu.insert("e", "Custom Input:", this::getDataFromCustomInput);
         menu.insert("q", "Quit", null);
         Runnable choice;
